@@ -1,0 +1,3 @@
+--port=50002
+--event_hub_conn_str=PLACE_VALUE_HERE
+--event_hub_name=PLACE_VALUE_HERE
