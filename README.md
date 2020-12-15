@@ -1,5 +1,5 @@
 # Azure EventHub Stream Proxy
-A gRPC service to proxy (broadcast) stream of event from Azure EventHub to multiple clients.
+A gRPC service to proxy (broadcast) stream of events from Azure EventHub to multiple clients.
 
 ## How it works
 
@@ -53,7 +53,7 @@ More information on proto: https://developers.google.com/protocol-buffers/docs/p
 
 ### Example
 Please refer to `eventhub_stream_proxy/example_client.py`, where there is an example client implementation in Python.
-Since the service is written using gRPC< a client can be desinged using any framework supported by gRPC.
+Since the service is written using gRPC, a client can be desinged using any framework supported by gRPC.
 More information on gRPC: https://grpc.io/
 
 ## Running unit tests
