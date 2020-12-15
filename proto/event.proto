@@ -1,0 +1,32 @@
+// Copyright 2020 Motorola Solutions, Inc.
+// All Rights Reserved.
+// Motorola Solutions Confidential Restricted
+
+syntax = "proto3";
+package eventhub_adapter;
+
+import "google/protobuf/empty.proto";
+import "google/protobuf/timestamp.proto";
+
+// Next available: 5.
+message Event {
+    string id = 1;
+    google.protobuf.Timestamp timestamp = 2;
+    string content = 3;
+    bool control = 4;
+}
+
+// Next available: 3.
+message SubscriberInfo {
+    string hostname = 1;
+    int32 port = 2;
+}
+
+service EventSubscription {
+    rpc Subscribe(SubscriberInfo) returns (google.protobuf.Empty) {}
+    rpc Unsubscribe(SubscriberInfo) returns (google.protobuf.Empty) {}
+}
+
+service EventReceiver {
+    rpc ReceiveEvents(stream Event) returns (google.protobuf.Empty) {}
+}

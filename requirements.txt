@@ -1,0 +1,15 @@
+#  Copyright 2020 Motorola Solutions, Inc.
+#  All Rights Reserved.
+#  Motorola Solutions Confidential Restricted
+
+absl-py==0.11.0
+azure-core==1.9.0
+azure-eventhub-checkpointstoreblob==1.1.1
+azure-eventhub==5.2.0
+cachetools==4.1.1
+fakeredis==1.4.5
+grpcio-health-checking==1.33.2
+grpcio-reflection==1.33.2
+grpcio==1.33.2
+mock==4.0.2
+protobuf==3.14.0
