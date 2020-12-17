@@ -60,3 +60,8 @@ More information on gRPC: https://grpc.io/
 ```
 bazelisk test ...:all
 ```
+
+## Building Docker image nad pushing to the image registry
+```
+bazelisk run //eventhub_stream_proxy:eventhub_stream_proxy_image_push --embed_label=YOUR_BUILD_TAH --define=IMAGE_REGISTRY=YOUR_IMAGE_REGISTRY --define=IMAGE_REPOSITORY=YOUR_IMAGE_REPOSITORY
+```
