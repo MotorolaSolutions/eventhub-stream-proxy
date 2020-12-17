@@ -121,7 +121,7 @@ container_push(
   name = "eventhub_stream_proxy_image_push",
   format = "Docker",
   image = ":eventhub_stream_proxy_image",
-  registry = "__IMAGE_REGISTRY__",
-  repository = "__IMAGE_REPOSITORY__",
+  registry = "$(IMAGE_REGISTRY)",
+  repository = "$(IMAGE_REPOSITORY)",
   tag = "{BUILD_EMBED_LABEL}",
 )
