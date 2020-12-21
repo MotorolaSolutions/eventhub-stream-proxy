@@ -28,10 +28,10 @@ You need to use Python >= 3.8.
 ## Configuring
 Configuration is done using flags.
 Flags can be defined in `flag_files/server_flags`. To get detailed help on flags, run:
-```
+```bash
 bazelisk run eventhub_stream_proxy:eventhub_stream_proxy -- --help
 ```
-```
+```bash
 bazelisk run eventhub_stream_proxy:example_client -- --help
 ```
 
@@ -39,12 +39,12 @@ More information on flags: https://abseil.io/docs/python/guides/flags
 
 ## Running
 ### Server
-```
+```bash
 bazelisk run eventhub_stream_proxy:eventhub_stream_proxy -- --flagfile=`pwd`/flag_files/server_flags
 ```
 
 ### Example client(s)
-```
+```bash
 bazelisk run eventhub_stream_proxy:example_client -- --eventhub_stream_proxy_address=localhost:50002
 ```
 
@@ -61,11 +61,25 @@ Since the service is written using gRPC, a client can be desinged using any fram
 More information on gRPC: https://grpc.io/
 
 ## Running unit tests
-```
+```bash
 bazelisk test ...:all
 ```
 
 ## Building Docker image and pushing to the image registry
+Append following rule to `eventhub_stream_proxy/BUILD` file:
+```starlark
+container_push(
+  name = "eventhub_stream_proxy_image_push",
+  format = "Docker",
+  image = ":eventhub_stream_proxy_image",
+  registry = "YOUR_IMAGE_REGISTRY",
+  repository = "YOUR_IMAGE_REPOSITORY",
+  tag = "{BUILD_EMBED_LABEL}",
+)
 ```
-bazelisk run //eventhub_stream_proxy:eventhub_stream_proxy_image_push --embed_label=YOUR_BUILD_TAG --define=IMAGE_REGISTRY=YOUR_IMAGE_REGISTRY --define=IMAGE_REPOSITORY=YOUR_IMAGE_REPOSITORY
+Replace `YOUR_IMAGE_REGISTRY` and `YOUR_IMAGE_REPOSITORY` with your values.
+
+Then run the image push:
+```bash
+bazelisk run eventhub_stream_proxy:eventhub_stream_proxy_image_push --embed_label=1.2.3.4
 ```

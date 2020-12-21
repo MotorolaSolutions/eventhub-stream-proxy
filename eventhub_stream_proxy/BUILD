@@ -116,12 +116,3 @@ app_layer(
     args = ["--flagfile=/etc/config/eventhub_stream_proxy_flagfile"],
     create_empty_workspace_dir = True,
 )
-
-container_push(
-  name = "eventhub_stream_proxy_image_push",
-  format = "Docker",
-  image = ":eventhub_stream_proxy_image",
-  registry = "$(IMAGE_REGISTRY)",
-  repository = "$(IMAGE_REPOSITORY)",
-  tag = "{BUILD_EMBED_LABEL}",
-)
