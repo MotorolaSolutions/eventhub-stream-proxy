@@ -3,16 +3,8 @@
 #  Motorola Solutions Confidential Restricted
 """Standard collections enhanced with useful features."""
 
-import atexit
-import cachetools
 import collections
-from collections import namedtuple
-from concurrent import futures
-import time
 import threading
-import queue
-
-from absl import logging
 
 
 class ThreadSafeMap(collections.MutableMapping):
@@ -45,4 +37,5 @@ class ThreadSafeMap(collections.MutableMapping):
             return len(self.store)
 
     def __keytransform__(self, key):
+        # pylint: disable=no-self-use
         return key

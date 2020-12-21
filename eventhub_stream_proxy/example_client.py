@@ -33,6 +33,7 @@ class EventReceiverServicer(event_pb2_grpc.EventReceiverServicer):
         self.ready_to_unsubscribe = False
 
     def ReceiveEvents(self, events_iter, _):
+        # pylint: disable=invalid-name
         """Get incoming events.
 
         Arguments:
@@ -51,7 +52,7 @@ class EventReceiverServicer(event_pb2_grpc.EventReceiverServicer):
         return google.protobuf.empty_pb2.Empty()
 
 
-def main(argv):
+def main(_):
     """Main function."""
 
     if FLAGS.debug_port:
@@ -89,8 +90,8 @@ def main(argv):
         logging.info('Unsubscribing')
         event_subscription.Unsubscribe(subscriber_info)
 
-    except Exception as e:
-        logging.fatal('Unexpected exception: %s', e)
+    except Exception as ex:
+        logging.fatal('Unexpected exception: %s', ex)
     finally:
         if event_subscription and subscriber_info:
             event_subscription.Unsubscribe(subscriber_info)

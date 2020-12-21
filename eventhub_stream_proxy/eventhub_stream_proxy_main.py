@@ -4,21 +4,19 @@
 """EventHub Stream Proxy for serving EventHub stream to multiple clients."""
 
 import queue
-import pydevd_pycharm
 from concurrent import futures
 
 import grpc
-from absl import logging
+import pydevd_pycharm
 from absl import app
 from absl import flags
-
+from absl import logging
 from grpc_health.v1 import health
 from grpc_health.v1 import health_pb2_grpc
 
-from utils import port_picker
-from proto import event_pb2_grpc
-
 from eventhub_stream_proxy import eventhub_stream_proxy_impl
+from proto import event_pb2_grpc
+from utils import port_picker
 
 _EVENTHUB_DEFAULT_CONSUMER_GROUP = '$default'
 
@@ -50,10 +48,12 @@ def main(_):
     event_queue = queue.Queue(maxsize=1024 * 100)
 
     event_hub_capture = eventhub_stream_proxy_impl.EventHubCapture(
-        FLAGS.event_hub_conn_str,
-        FLAGS.event_hub_name,
-        FLAGS.event_hub_consumer_group,
-        event_queue,
+        event_hub_info={
+            'event_hub_conn_str': FLAGS.event_hub_conn_str,
+            'event_hub_name': FLAGS.event_hub_name,
+            'event_hub_consumer_group': FLAGS.event_hub_consumer_group
+        },
+        event_queue=event_queue,
         event_queue_put_timeout_sec=30)
     event_hub_capture.start()
     logging.info('Started EventHub capture thread')

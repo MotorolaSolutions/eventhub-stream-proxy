@@ -1,25 +1,17 @@
 #  Copyright 2020 Motorola Solutions, Inc.
 #  All Rights Reserved.
 #  Motorola Solutions Confidential Restricted
-
-import datetime
+# pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,protected-access,no-self-use
 import queue
+
 import mock
-
-import eventhub_stream_proxy
-
-from proto import event_pb2
-
 from absl.testing import absltest
-from absl.testing import flagsaver
 
 from eventhub_stream_proxy import eventhub_stream_proxy_impl
+from proto import event_pb2
 
 
 class EventSubscriptionServicerTestCase(absltest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_event_subscription_servicer_subscribe_new_client(self):
         # Given.
@@ -59,17 +51,18 @@ class EventSubscriptionServicerTestCase(absltest.TestCase):
 
 class EventHubCaptureTestCase(absltest.TestCase):
 
-    def setUp(self):
-        pass
-
     def test_event_hub_events_passed_to_queue(self):
         # Given.
         event_queue = queue.Queue(maxsize=10)
         event_hub_capture = eventhub_stream_proxy_impl.EventHubCapture(
-            'Endpoint=sb://FQDN/;SharedAccessKeyName=KeyName;SharedAccessKey=KeyValue',
-            'event_hub_name',
-            'event_hub_consumer_group',
-            event_queue,
+            event_hub_info={
+                'event_hub_conn_str': 'Endpoint=sb://FQDN/;'
+                                      'SharedAccessKeyName=KeyName;'
+                                      'SharedAccessKey=KeyValue',
+                'event_hub_name': 'event_hub_name',
+                'event_hub_consumer_group': 'event_hub_consumer_group'
+            },
+            event_queue=event_queue,
             event_queue_put_timeout_sec=1)
 
         event_hub_capture._receive_eventhub_client = mock.MagicMock()
@@ -82,8 +75,7 @@ class EventHubCaptureTestCase(absltest.TestCase):
             return_value=[eventhub_event])
 
         # When.
-        event_hub_capture._on_event(partition_context=None,
-                                    event=eventhub_event)
+        event_hub_capture._on_event(event=eventhub_event)
 
         # Then.
         event_from_queue = event_queue.get()
@@ -91,9 +83,6 @@ class EventHubCaptureTestCase(absltest.TestCase):
 
 
 class ClientStreamerTestCase(absltest.TestCase):
-
-    def setUp(self):
-        pass
 
     def test_stream_event_when_no_receivers(self):
         # Given.
@@ -122,8 +111,7 @@ class ClientStreamerTestCase(absltest.TestCase):
         # Given.
         event_receiver = mock.MagicMock()
         event_receiver_address = 'foobar:50000'
-        event_receivers_dict = {}
-        event_receivers_dict[event_receiver_address] = event_receiver
+        event_receivers_dict = {event_receiver_address: event_receiver}
 
         event_subscription_servicer = mock.MagicMock()
         event_subscription_servicer.event_receivers_dict = event_receivers_dict
@@ -136,11 +124,11 @@ class ClientStreamerTestCase(absltest.TestCase):
 
         # When.
         with mock.patch.object(event_receiver,
-                               'ReceiveEvents') as ReceiveEvents_method:
+                               'ReceiveEvents') as receive_events_method:
             client_streamer._stream()
 
         # Then.
-        ReceiveEvents_method.assert_called_once()
+        receive_events_method.assert_called_once()
 
     def test_stream_event_fail_on_unexpected_error(self):
         # Given.
@@ -162,18 +150,17 @@ class ClientStreamerTestCase(absltest.TestCase):
             event_queue_get_batch_threshold=10)
 
         with mock.patch.object(event_receiver,
-                               'ReceiveEvents') as ReceiveEvents_method:
+                               'ReceiveEvents') as receive_events_method:
             with mock.patch.object(
                     event_subscription_servicer,
                     'unsubscribe_by_address') as unsubscribe_by_address_method:
-
-                ReceiveEvents_method.side_effect = Exception(
+                receive_events_method.side_effect = Exception(
                     'Something bad happened')
                 # When.
                 client_streamer._stream_events_to_subscribers([event])
 
         # Then.
-        ReceiveEvents_method.assert_called_once()
+        receive_events_method.assert_called_once()
         unsubscribe_by_address_method.assert_called_once()
 
 

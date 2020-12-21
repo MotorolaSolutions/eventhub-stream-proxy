@@ -24,28 +24,27 @@ _EVENTHUB_DEFAULT_CONSUMER_GROUP = '$default'
 class EventHubCapture:
     """Gets events from EventHub and puts them to the queue."""
 
-    def __init__(self, event_hub_conn_str, event_hub_name,
-                 event_hub_consumer_group, event_queue,
+    def __init__(self, event_hub_info, event_queue,
                  event_queue_put_timeout_sec):
         """Creates instance.
 
         Arguments:
-            event_hub_conn_str {str} -- EventHub connection string.
-            event_hub_name {str} -- EventHub connection name.
-            event_hub_consumer_group {str} -- EventHub consumer group to attach to.
+            event_hub_info {dict} with keys 'event_hub_conn_str',
+                    'event_hub_name', 'event_hub_consumer_group'
             event_queue_put_timeout_sec {int} -- timeout in sec before trying
         """
 
         self._receive_eventhub_client = EventHubConsumerClient.from_connection_string(
-            event_hub_conn_str,
+            event_hub_info['event_hub_conn_str'],
             consumer_group=_EVENTHUB_DEFAULT_CONSUMER_GROUP,
-            eventhub_name=event_hub_name)
+            eventhub_name=event_hub_info['event_hub_name'])
 
-        self.event_hub_consumer_group = event_hub_consumer_group
+        self.event_hub_consumer_group = event_hub_info[
+            'event_hub_consumer_group']
         self.event_queue = event_queue
         self.event_queue_put_timeout_sec = event_queue_put_timeout_sec
 
-    def _on_event(self, partition_context, event):
+    def _on_event(self, _partition_context=None, event=None):
         event_data_str = event.body_as_str(encoding="UTF-8")
         event_data_sequence_number = event.sequence_number
         event_data_enqueued_time = event.enqueued_time
@@ -118,16 +117,17 @@ class ClientStreamer:
         for client_address in list(event_receivers):
             for event in events:
                 try:
-                    event_receivers[client_address].ReceiveEvents(iter([event]))
+                    event_receivers[client_address].ReceiveEvents(
+                        iter([event]))
                     if event.control:
                         logging.info('Streamed control event to %s',
                                      client_address)
                     else:
                         logging.info('Streamed event with content %s to %s',
                                      event.content, client_address)
-                except Exception as e:
+                except Exception as ex:
                     logging.warning('Nothing was streamed to %s, cause: %s',
-                                    client_address, e)
+                                    client_address, ex)
                     dead_clients.append(client_address)
                     break
 
@@ -158,7 +158,7 @@ class ClientStreamer:
 
                     if current_qsize > self.event_queue_get_batch_threshold:
                         if len(events_to_stream
-                              ) > self._BATCH_QUEUE_GET_CHUNK_SIZE - 1:
+                               ) > self._BATCH_QUEUE_GET_CHUNK_SIZE - 1:
                             break
                     else:
                         break
@@ -179,8 +179,8 @@ class ClientStreamer:
 
             self._stream_events_to_subscribers(events_to_stream)
 
-        except Exception as e:
-            logging.fatal('Unexpected exception: %s', e)
+        except Exception as ex:
+            logging.fatal('Unexpected exception: %s', ex)
 
     def _run_stream_loop(self):
         while True:
@@ -200,6 +200,7 @@ class EventSubscriptionServicer(event_pb2_grpc.EventSubscriptionServicer):
         self.event_receivers_dict = custom_collections.ThreadSafeMap()
 
     def Subscribe(self, subscriber_info, _):
+        # pylint: disable=invalid-name
         """Subscribe a new client.
 
         Arguments:
@@ -219,8 +220,8 @@ class EventSubscriptionServicer(event_pb2_grpc.EventSubscriptionServicer):
                          subscriber_address, len(self.event_receivers_dict))
             return google.protobuf.empty_pb2.Empty()
 
-        except Exception as e:
-            logging.fatal('Unexpected exception: %s', e)
+        except Exception as ex:
+            logging.fatal('Unexpected exception: %s', ex)
 
     def unsubscribe_by_address(self, subscriber_address):
         """Unsubscribe given client.
@@ -240,6 +241,7 @@ class EventSubscriptionServicer(event_pb2_grpc.EventSubscriptionServicer):
                      subscriber_address, len(self.event_receivers_dict))
 
     def Unsubscribe(self, subscriber_info, _):
+        # pylint: disable=invalid-name
         """Unsubscribe given client.
 
         Arguments:
