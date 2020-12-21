@@ -4,6 +4,7 @@
 """EventHub Stream Proxy for serving EventHub stream to multiple clients."""
 
 import queue
+import pydevd_pycharm
 from concurrent import futures
 
 import grpc
@@ -33,9 +34,15 @@ flags.DEFINE_string('event_hub_consumer_group',
                     _EVENTHUB_DEFAULT_CONSUMER_GROUP,
                     'EventHub consumer group to attach to')
 
+flags.DEFINE_integer('debug_port', None, 'Debug port')
+
 
 def main(_):
     """Main code."""
+
+    if FLAGS.debug_port:
+        pydevd_pycharm.settrace('localhost', port=FLAGS.debug_port,
+                                stdoutToServer=True)
 
     # Rationale when setting value 1024*30.
     # Avg size of an event is 250-300 bytes.

@@ -23,6 +23,7 @@ py_binary(
         requirement("protobuf"),
         requirement("azure-eventhub-checkpointstoreblob"),
         requirement("azure-eventhub"),
+        requirement("pydevd-pycharm"),
         "//proto:event_py_proto",
         "//utils:port_picker_lib",
         ":eventhub_stream_proxy_impl",
@@ -47,6 +48,7 @@ py_binary(
         requirement("absl-py"),
         requirement("protobuf"),
         requirement("grpcio"),
+        requirement("pydevd-pycharm"),
         "//proto:event_py_proto",
         "//utils:port_picker_lib",
     ]

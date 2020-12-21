@@ -3,25 +3,27 @@
 #  Motorola Solutions Confidential Restricted
 """Simple client for EventHub Stream Proxy."""
 
-from concurrent import futures
 import time
+from concurrent import futures
 
-from absl import logging
+import google.protobuf.empty_pb2
+import google.protobuf.timestamp_pb2
+import grpc
+import pydevd_pycharm
 from absl import app
 from absl import flags
+from absl import logging
 
-import grpc
-import google.protobuf.timestamp_pb2
-import google.protobuf.empty_pb2
-
-from utils import port_picker
-from proto import event_pb2_grpc
 from proto import event_pb2
+from proto import event_pb2_grpc
+from utils import port_picker
 
 FLAGS = flags.FLAGS
 flags.DEFINE_string('eventhub_stream_proxy_address', None,
                     'EventHub Stream Proxy address <hostname>:<port>')
 flags.mark_flag_as_required('eventhub_stream_proxy_address')
+
+flags.DEFINE_integer('debug_port', None, 'Debug port')
 
 
 class EventReceiverServicer(event_pb2_grpc.EventReceiverServicer):
@@ -51,6 +53,11 @@ class EventReceiverServicer(event_pb2_grpc.EventReceiverServicer):
 
 def main(argv):
     """Main function."""
+
+    if FLAGS.debug_port:
+        pydevd_pycharm.settrace('localhost', port=FLAGS.debug_port,
+                                stdoutToServer=True)
+
     event_subscription = None
     subscriber_info = None
     try:
