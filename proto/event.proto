@@ -3,7 +3,7 @@
 // Motorola Solutions Confidential Restricted
 
 syntax = "proto3";
-package eventhub_adapter;
+package eventhub_stream_proxy;
 
 import "google/protobuf/empty.proto";
 import "google/protobuf/timestamp.proto";
