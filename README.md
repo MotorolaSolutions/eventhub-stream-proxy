@@ -3,17 +3,10 @@ A gRPC service to proxy (broadcast) stream of events from Azure EventHub to mult
 
 ## How it works
 
-A client calls `Subscribe()` on proxy.
+A client calls `Subscribe()` on proxy. Once there are events in the EventHub, the proxy server streams events by calling `ReceiveEvents()` on each client.
 <br>
 
-![](diagrams/sub.png)
-
-<br>
-<br>
-Once there are events in the EventHub, the proxy server streams events by calling `ReceiveEvents()` on each client.
-<br>
-
-![](diagrams/receive.png)
+![](diagrams/sequence.png)
 
 ## Prerequisites
 

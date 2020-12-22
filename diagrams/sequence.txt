@@ -1,0 +1,23 @@
+@startuml
+skinparam monochrome true
+participant Client1
+participant Client2
+participant Client3
+participant EventHubStreamProxy
+collections AzureEventHub
+group Subscribe
+    Client1 -> EventHubStreamProxy: Subscribe()
+    Client2 -> EventHubStreamProxy: Subscribe()
+    Client3 -> EventHubStreamProxy: Subscribe()
+end
+group Stream
+    AzureEventHub -> EventHubStreamProxy: Event1
+    EventHubStreamProxy -> Client1: ReceiveEvents([Event1])
+    EventHubStreamProxy -> Client2: ReceiveEvents([Event1])
+    EventHubStreamProxy -> Client3: ReceiveEvents([Event1])
+    Client1 -> EventHubStreamProxy: Unsubscribe()
+    AzureEventHub -> EventHubStreamProxy: Event2
+    EventHubStreamProxy -> Client2: ReceiveEvents([Event2])
+    EventHubStreamProxy -> Client3: ReceiveEvents([Event2])
+end
+@enduml
