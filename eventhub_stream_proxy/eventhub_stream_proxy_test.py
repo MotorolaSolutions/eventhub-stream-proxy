@@ -1,4 +1,4 @@
-#  Copyright 2020 Motorola Solutions, Inc.
+#  Copyright 2020-2021 Motorola Solutions, Inc.
 #  All Rights Reserved.
 #  Motorola Solutions Confidential Restricted
 # pylint: disable=missing-module-docstring,missing-class-docstring,missing-function-docstring,protected-access,no-self-use
