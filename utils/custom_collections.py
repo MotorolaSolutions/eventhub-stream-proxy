@@ -1,4 +1,4 @@
-#  Copyright 2018-2020 Motorola Solutions, Inc.
+#  Copyright 2021 Motorola Solutions, Inc.
 #  All Rights Reserved.
 #  Motorola Solutions Confidential Restricted
 """Standard collections enhanced with useful features."""
