@@ -54,16 +54,20 @@ class EventHubCapture:
                     'event_hub_name', 'event_hub_consumer_group'
             event_queue_put_timeout_sec {int} -- timeout in sec before trying
         """
+        
+        _consumer_group = _EVENTHUB_DEFAULT_CONSUMER_GROUP
+
+        if 'event_hub_consumer_group' in event_hub_info and event_hub_info['event_hub_consumer_group']:
+            _consumer_group = event_hub_info['event_hub_consumer_group']
+
+        self.event_hub_consumer_group = _consumer_group
+        self.event_queue = event_queue
+        self.event_queue_put_timeout_sec = event_queue_put_timeout_sec
 
         self._receive_eventhub_client = EventHubConsumerClient.from_connection_string(
             event_hub_info['event_hub_conn_str'],
-            consumer_group=_EVENTHUB_DEFAULT_CONSUMER_GROUP,
+            consumer_group=_consumer_group,
             eventhub_name=event_hub_info['event_hub_name'])
-
-        self.event_hub_consumer_group = event_hub_info[
-            'event_hub_consumer_group']
-        self.event_queue = event_queue
-        self.event_queue_put_timeout_sec = event_queue_put_timeout_sec
 
     def _on_event(self, _partition_context=None, event=None):
         event_data_str = event.body_as_str(encoding="UTF-8")
