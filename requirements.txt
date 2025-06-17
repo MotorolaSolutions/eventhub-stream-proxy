@@ -31,7 +31,7 @@ cachetools==4.2.0
 fakeredis==1.4.5
 grpcio-health-checking==1.34.0
 grpcio-reflection==1.34.0
-grpcio==1.34.0
+grpcio==1.53.2
 mock==4.0.3
 protobuf==4.25.8
 pydevd-pycharm~=203.6682.86
